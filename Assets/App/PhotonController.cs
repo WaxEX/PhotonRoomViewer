@@ -29,7 +29,7 @@ public class PhotonController: Photon.PunBehaviour {
         this.drawStatistics();
 
         // 何か右端に出すおまじない
-        GUILayout.BeginArea(new Rect(500, 0, Screen.width, Screen.height));
+        GUILayout.BeginArea(new Rect(300, 0, Screen.width, Screen.height));
         
         // photon接続情報
         this.drawStatus();
