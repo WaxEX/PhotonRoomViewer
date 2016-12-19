@@ -8,14 +8,16 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PhotonController: Photon.PunBehaviour {
 
+	private int roomTTL   = 10;
+	private int playerTTL = 10;
+
     /*********************************************************************
      * Unity funcs
      *********************************************************************/
     void Start () {
 		Debug.Log("Start");
 
-		// シーン同期もする
-		PhotonNetwork.automaticallySyncScene = true;
+
 
 		PhotonNetwork.ConnectUsingSettings("0.1");
 	}
@@ -23,6 +25,14 @@ public class PhotonController: Photon.PunBehaviour {
 	public void OnGUI()
     {
         // ToDo 毎回更新は負荷が重いので、数秒おきの更新にしたい。
+		GUIStyle guiStyle = new GUIStyle();
+		GUIStyleState styleState = new GUIStyleState();
+		styleState.textColor = Color.black;
+
+
+
+		guiStyle.normal = styleState;
+		GUI.skin.label = guiStyle;
 
 
         // ルーム数とか
@@ -99,7 +109,6 @@ public class PhotonController: Photon.PunBehaviour {
         PhotonNetwork.CreateRoom(null, getRoomOptions(), null);
     }
 
-
     public void OnPhotonRandomJoinFailed(){
 		Debug.Log("OnPhotonRandomJoinFailed");
 
@@ -109,12 +118,10 @@ public class PhotonController: Photon.PunBehaviour {
 	public override void OnJoinedRoom(){
 		Debug.Log("OnJoinedRoom");
 
-		// Scene移動
-		//SceneManager.LoadScene("Game");
+		PhotonNetwork.Instantiate("player", Vector3.zero, Quaternion.identity, 0);
 	}
 
 	private TypedLobby getLobbyInfo(){
-        //string lobby_name = "Union0"+player.GetComponent<player>().union;
         string lobby_name = "Test_Lobby";
         return new TypedLobby(lobby_name, LobbyType.Default);
 	}
@@ -130,8 +137,8 @@ public class PhotonController: Photon.PunBehaviour {
 		option.IsVisible  = true;
         option.IsOpen = true;
 
-        option.PlayerTtl    = 10 * 1000;   //millisec
-        option.EmptyRoomTtl = 10 * 1000;   //millisec
+		option.EmptyRoomTtl = roomTTL   * 1000;   //millisec
+		option.PlayerTtl    = playerTTL * 1000;   //millisec
 
         option.MaxPlayers = 3;
 
@@ -139,15 +146,11 @@ public class PhotonController: Photon.PunBehaviour {
 	}
 
 
-
-
-
 /*********************************************************************
  * for DEBUG
  *********************************************************************/
-	private string _loggingLobbyList(){
 
-        Debug.Log("Logging Lobby");
+	private string _loggingLobbyList(){
 
         var list = "===Lobbies: ";
 		list += PhotonNetwork.LobbyStatistics.Count+"===\n";
@@ -158,9 +161,7 @@ public class PhotonController: Photon.PunBehaviour {
 	}
 
 	public string _loggingRoomList(){
-
-        Debug.Log("Logging Room");
-
+		
         var list = "===Rooms: ";
 
         if (!PhotonNetwork.insideLobby){
@@ -175,4 +176,13 @@ public class PhotonController: Photon.PunBehaviour {
 
         return list;
 	}
+
+	public void setRoomTTL(float val){
+		roomTTL = (int)val;
+	}
+
+	public void setPlayerTTL(float val){
+		playerTTL = (int)val;
+	}
+
 }
