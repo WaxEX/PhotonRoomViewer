@@ -34,3 +34,5 @@ sysinfo.txt
 
 # -------------[ CUSTOM ]------------------------ #
 Build/
+PhotonServerSettings.asset
+PhotonServerSettings.asset.meta
